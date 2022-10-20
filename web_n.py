@@ -24,13 +24,13 @@ class webNews():
         rrr = random.randrange(700,770)
 
 
-        ssss = f"https://orf.at/stories/3289{rrr}/"
-        wwww = "https://de.wikipedia.org/wiki/Spezial:Zuf%C3%A4llige_Seite"
+        orf = f"https://orf.at/stories/3289{rrr}/"
+        wikipedia = "https://de.wikipedia.org/wiki/Spezial:Zuf%C3%A4llige_Seite"
 
         if(selected_mode == 'Wikipedia'):
-            page = requests.get(wwww)
+            page = requests.get(wikipedia)
         if(selected_mode == 'ORF'):
-            page = requests.get(ssss)
+            page = requests.get(orf)
 
         
         thetext = ""
@@ -43,8 +43,8 @@ class webNews():
         if(selected_mode == 'ORF'):
             t_date = soup.find('div', class_=('print-only')).getText()
             t_regs = re.sub(' +', ' ', t_date)
-            t_sss = re.sub('^\s', '', t_regs)
-            dpg.set_value('date_text', t_sss)
+            t_sub = re.sub('^\s', '', t_regs)
+            dpg.set_value('date_text', t_sub)
             print(t_date)
 
 
@@ -60,7 +60,7 @@ class webNews():
         thePage = ""
 
         if(selected_mode == 'ORF'):
-            thePage = ssss
+            thePage = orf
         if(selected_mode == 'Wikipedia'):
             thePage = page.url
 
@@ -112,13 +112,9 @@ class webNews():
         dpg.set_value('series', [t_items, t_times] )
 
         dpg.set_axis_ticks('x_axis', ((t_names[0],t_times[0]),(t_names[1],t_times[1]),(t_names[2],t_times[3]),(t_names[4],t_times[4]),(t_names[5],t_times[5])  ))
-       # dpg.set_axis_ticks('x_axis', ( ('P1',1), ('P2', 2), ('P3', 3), ('P4', 4), ('P5', 5) ))
-        #dpg.set_axis_ticks('x_axis', ((t_times[0],t_names[0]),(t_times[1],t_names[1]),(t_times[2],t_names[3]),(t_times[4],t_names[4]),(t_times[5],t_names[5])  ))
         dpg.fit_axis_data('x_axis')
         dpg.fit_axis_data('y_axis')
 
-        
-      #  print(t_items)
         print(t_times)
         temptext = ""
         countt = 0
@@ -146,18 +142,17 @@ class webNews():
         dpg.add_input_text(tag='input_text', multiline=True, readonly=True, width=570, height= 600)
         dpg.add_button(callback=refresh, label='refresh')
         dpg.add_combo(tag='cbo', label='mode', items=modes, default_value='ORF')
-        #dpg.add_button(callback=openPlot, label='Open Demographic')
         dpg.add_input_text(tag='search_result', label='Most Common Words', readonly=True, multiline=True, height=60)
         dpg.add_input_text(tag='article_url',label='Article URL', readonly=True)
         dpg.show_style_editor()
         dpg.show_font_manager()
         with dpg.plot(label="Most common words", height=400, width=400):
-            # optionally create legend
+
             dpg.add_plot_legend()
-            # REQUIRED: create x and y axes
+
             dpg.add_plot_axis(dpg.mvXAxis, label="Words", tag="x_axis")
             dpg.add_plot_axis(dpg.mvYAxis, label="Occurences", tag="y_axis")
-            # series belong to a y axis
+
             dpg.add_line_series([2010,2011,2012,2013,2014], [0,300,400,700,200,500], parent="y_axis", tag='series')    
               
 
