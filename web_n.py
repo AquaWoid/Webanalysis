@@ -17,7 +17,7 @@ dpg.create_viewport(title='Daily News', width=600, height=840)
 class webNews():
 
 #is this git working?
-
+#also ist es doch git push?
     def refresh():
 
         selected_mode = dpg.get_value('cbo')
