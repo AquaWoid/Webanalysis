@@ -42,9 +42,9 @@ class webNews():
 
         if(selected_mode == 'ORF'):
             t_date = soup.find('div', class_=('print-only')).getText()
-            t_regs = re.sub(' +', ' ', t_date)
-            t_sub = re.sub('^\s', '', t_regs)
-            dpg.set_value('date_text', t_sub)
+            t_date = re.sub(' +', ' ', t_date)
+            t_date = re.sub('^\s', '', t_date)
+            dpg.set_value('date_text', t_date)
             print(t_date)
 
     #Extracting Heading
@@ -74,21 +74,21 @@ class webNews():
     #Text fromatting using textwrap and regex
 
         wrapper = textwrap.TextWrapper(width=50)
-        det_text = textwrap.dedent(text=thetext)
+        t_formatted = textwrap.dedent(text=thetext)
 
-        t_formatted = textwrap.fill(det_text, width=70, break_long_words=True)
-        t_reg = re.sub(' +', ' ', t_formatted)
-        t_ss = re.sub('^\s', '', t_reg)        
+        t_formatted = textwrap.fill(t_formatted, width=70, break_long_words=True)
+        t_formatted = re.sub(' +', ' ', t_formatted)
+        t_formatted = re.sub('^\s', '', t_formatted)        
 
-        dpg.set_value('input_text', t_ss)
-        print(t_reg)
+        dpg.set_value('input_text', t_formatted)
+
         print(page.url)
 
 #Word counting
 
     #Splitting String into a list with all words and counting the most used ones
 
-        t_cleaned = re.sub('(?![Ä-ü])\W|\d', ' ', t_ss)
+        t_cleaned = re.sub('(?![Ä-ü])\W|\d', ' ', t_formatted)
         split_it = t_cleaned.split()
         Counter = collections.Counter(map(str.lower, split_it))
         most_occur = Counter.most_common(10)
@@ -145,7 +145,7 @@ class webNews():
 
     modes = ['ORF', 'Wikipedia']
 
-    #UI Initialisation
+#UI Initialisation
 
     with dpg.window(label='Random Articles', width=585, height=800):
         dpg.add_input_text(tag='date_text', readonly=True, width=570)
