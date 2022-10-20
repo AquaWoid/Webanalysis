@@ -16,7 +16,7 @@ dpg.create_viewport(title='Daily News', width=600, height=840)
 
 class webNews():
 
-
+#is this git working?
 
     def refresh():
 
