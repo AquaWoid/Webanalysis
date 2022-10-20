@@ -1,5 +1,4 @@
 import collections
-from subprocess import call
 import textwrap
 import requests
 from bs4 import BeautifulSoup
@@ -111,10 +110,14 @@ class webNews():
             t_names.append(x[0]) 
 
         dpg.set_value('series', [t_items, t_times] )
+
+        dpg.set_axis_ticks('x_axis', ((t_names[0],t_times[0]),(t_names[1],t_times[1]),(t_names[2],t_times[3]),(t_names[4],t_times[4]),(t_names[5],t_times[5])  ))
+       # dpg.set_axis_ticks('x_axis', ( ('P1',1), ('P2', 2), ('P3', 3), ('P4', 4), ('P5', 5) ))
+        #dpg.set_axis_ticks('x_axis', ((t_times[0],t_names[0]),(t_times[1],t_names[1]),(t_times[2],t_names[3]),(t_times[4],t_names[4]),(t_times[5],t_names[5])  ))
         dpg.fit_axis_data('x_axis')
         dpg.fit_axis_data('y_axis')
-        dpg.set_axis_ticks('x_axis', ((t_names[0],t_times[0]),(t_names[1],t_times[1]),(t_names[2],t_times[3]),(t_names[4],t_times[4]),(t_names[5],t_times[5])  ))
 
+        
       #  print(t_items)
         print(t_times)
         temptext = ""
