@@ -117,12 +117,10 @@ class webNews():
         for x in most_occur:
             t_names.append(x[0]) 
 
-    #Setting axis values 
+    #Setting piechar values and labels 
 
-        dpg.set_value('series', [t_items, t_times] )
-        dpg.set_axis_ticks('x_axis', ((t_names[0],t_times[0]),(t_names[1],t_times[1]),(t_names[2],t_times[3]),(t_names[4],t_times[4]),(t_names[5],t_times[5])  ))
-        dpg.fit_axis_data('x_axis')
-        dpg.fit_axis_data('y_axis')
+        dpg.configure_item('pie', labels=[t_names[0],t_names[1], t_names[2], t_names[3], t_names[4]])
+        dpg.set_value('pie', [[t_times[0],t_times[1],t_times[2],t_times[3], t_times[4]], [], [], [], []])
 
         print(t_times)
  
@@ -157,15 +155,24 @@ class webNews():
         dpg.add_input_text(tag='article_url',label='Article URL', readonly=True)
         dpg.show_style_editor()
         dpg.show_font_manager()
-        with dpg.plot(label="Most common words", height=400, width=400):
+        
 
-            dpg.add_plot_legend()
 
-            dpg.add_plot_axis(dpg.mvXAxis, label="Words", tag="x_axis")
-            dpg.add_plot_axis(dpg.mvYAxis, label="Occurences", tag="y_axis")
+        with dpg.plot(no_title=True, no_mouse_pos=True, width=300, height=300):
 
-            dpg.add_line_series([2010,2011,2012,2013,2014], [0,300,400,700,200,500], parent="y_axis", tag='series')    
-              
+            plttt = dpg.add_plot_legend(show=True)
+            dpg.show_item(plttt)
+
+            dpg.add_plot_axis(dpg.mvXAxis, label="", no_gridlines=True, no_tick_marks=True, no_tick_labels=True  )
+            dpg.set_axis_limits(dpg.last_item(), 0, 1)
+
+            with dpg.plot_axis(dpg.mvYAxis, label="", no_gridlines=True, no_tick_marks=True, no_tick_labels=True):
+                dpg.set_axis_limits(dpg.last_item(), 0, 1)
+                dpg.add_pie_series(0.5,0.5,0.5, [1,2,3], ["label1", 'label2', 'label3'] , normalize=True, tag='pie')
+                print(dpg.get_value('pie'))
+                print(dpg.get_item_configuration("pie"))
+
+            
 dpg.setup_dearpygui()
 dpg.show_viewport()
 dpg.start_dearpygui()
