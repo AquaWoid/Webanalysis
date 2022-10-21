@@ -7,8 +7,9 @@ import dearpygui.dearpygui as dpg
 import re
 
 
+
 dpg.create_context()
-dpg.create_viewport(title='Daily News', width=1000, height=1000)
+dpg.create_viewport(title='Daily News', width=1000, height=850)
 
 
 class webNews():
@@ -18,16 +19,28 @@ class webNews():
 
         selected_mode = dpg.get_value('cbo')
 
-    #Website init
+#Website init
 
-        rrr = random.randrange(700,770)
-        orf = f"https://orf.at/stories/3289{rrr}/"
+
         wikipedia = "https://de.wikipedia.org/wiki/Spezial:Zuf%C3%A4llige_Seite"
+
+    #Getting current links from the site
+
+        lg_page = requests.get("https://orf.at/")
+        lg_soup = BeautifulSoup(lg_page.content, 'html.parser')
+        lg_links = lg_soup.find_all('a',{'href': re.compile('^.*\d{2}.')})
+
+
+        lg_li = []
+
+        for a in lg_links:
+            lg_li.append(a['href'])
+
 
         if(selected_mode == 'Wikipedia'):
             page = requests.get(wikipedia)
         if(selected_mode == 'ORF'):
-            page = requests.get(orf)
+            page = requests.get(lg_li[random.randrange(0,len(lg_li))])
 
     #Pseudo text init
         
@@ -91,7 +104,7 @@ class webNews():
         t_cleaned = re.sub('(?![Ä-ü])\W|\d', ' ', t_formatted)
 
         if(dpg.get_value('filter_words')):
-            t_cleaned = re.sub(r'\b(d|D|)e(r|s)\b|\b(d|D)ie\b|\b(d|D)as\b|\b(i|I)n\b|\b(i|I)m\b|\b(i|I)ns\b|\b(a|A)uf\b|\b(v|V)on\b|\b(z|Z)u\b|\b(d|D)en\b|\b(d|D)em\b|\b(u|U)nd\b|\b(a|A)ls\b|\b(b|B)ei\b|\b(b|B)eim\b|\b(i|I)st\b|\b(e|E)in\b|\b(a|A)us\b|\b(m|M)it\b|\b(e|E)ine(|n)\b|\b(a|A)n\b|\b(b|B)is\b|\b(e|E)\b|\b(n|N)ach\b|\b(f|F)ür\b|\b(a|A)(n|m)\b', '', t_cleaned)
+            t_cleaned = re.sub(r'\b(d|D|)e(r|s)\b|\b(d|D)ie\b|\b(d|D)as\b|\b(i|I)n\b|\b(i|I)m\b|\b(i|I)ns\b|\b(a|A)uf\b|\b(v|V)on\b|\b(z|Z)u\b|\b(d|D)en\b|\b(d|D)em\b|\b(u|U)nd\b|\b(a|A)ls\b|\b(b|B)ei\b|\b(b|B)eim\b|\b(i|I)st\b|\b(e|E)in\b|\b(a|A)us\b|\b(m|M)it\b|\b(e|E)ine(|n)\b|\b(a|A)n\b|\b(b|B)is\b|\b(e|E)\b|\b(n|N)ach\b|\b(f|F)ür\b|\b(a|A)(n|m)\b|\b(s|S)i(e|ch)\b|\b(w|W)(ar|er|s)', '', t_cleaned)
 
 
         split_it = t_cleaned.split()
@@ -133,10 +146,10 @@ class webNews():
     #Debug: Setting most common words result text
 
         temptext = ""
-        countt = 0
+        count = 0
 
         for x in most_occur:
-            countt += 1
+            count += 1
             temptext += (str( x[0]) + ": " + str( x[1]) + " | ")
 
         t_textt = textwrap.fill(temptext, width=50)
@@ -150,19 +163,19 @@ class webNews():
 
 #UI Initialisation
 
-    with dpg.window(label='Random Articles', width=1000, height=1000):
+    with dpg.window(label='Random Articles', width=1000, height=820):
         dpg.add_input_text(tag='date_text', readonly=True, width=570)
         dpg.add_input_text(tag='title_text', readonly=True, width=570)
         dpg.add_input_text(tag='input_text', multiline=True, readonly=True, width=570, height= 600)
-        dpg.add_button(callback=refresh, label='refresh')
+        dpg.add_button(callback=refresh, label='refresh', width=570)
         dpg.add_combo(tag='cbo', label='mode', items=modes, default_value='ORF',width=570)
         dpg.add_input_text(tag='search_result', label='Most Common Words', readonly=True, multiline=True, height=60,width=570)
         dpg.add_input_text(tag='article_url',label='Article URL', readonly=True,width=570)
-        dpg.add_checkbox(tag='filter_words', label='Filter common words')
+        dpg.add_checkbox(tag='filter_words', label='Filter common words', pos=[580,430], default_value=True)
         dpg.show_style_editor()
         dpg.show_font_manager()
         
-
+#Plot Initialisation
 
         with dpg.plot(label='Most common words', no_mouse_pos=True, width=400, height=400, pos=[580,27]):
 
@@ -174,10 +187,11 @@ class webNews():
 
             with dpg.plot_axis(dpg.mvYAxis, label="", no_gridlines=True, no_tick_marks=True, no_tick_labels=True):
                 dpg.set_axis_limits(dpg.last_item(), 0, 1)
-                dpg.add_pie_series(0.5,0.5,0.5, [1,2,3], ["label1", 'label2', 'label3'] , normalize=True, tag='pie')
+                dpg.add_pie_series(0.5,0.5,0.5, [1,2,3], ["Most", 'common', 'words'] , normalize=True, tag='pie')
                 print(dpg.get_value('pie'))
                 print(dpg.get_item_configuration("pie"))
 
+#Show UI
             
 dpg.setup_dearpygui()
 dpg.show_viewport()
