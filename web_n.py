@@ -8,7 +8,7 @@ import re
 
 
 dpg.create_context()
-dpg.create_viewport(title='Daily News', width=600, height=840)
+dpg.create_viewport(title='Daily News', width=1000, height=1000)
 
 
 class webNews():
@@ -89,6 +89,11 @@ class webNews():
     #Splitting String into a list with all words and counting the most used ones
 
         t_cleaned = re.sub('(?![Ä-ü])\W|\d', ' ', t_formatted)
+
+        if(dpg.get_value('filter_words')):
+            t_cleaned = re.sub(r'\b(d|D|)e(r|s)\b|\b(d|D)ie\b|\b(d|D)as\b|\b(i|I)n\b|\b(i|I)m\b|\b(i|I)ns\b|\b(a|A)uf\b|\b(v|V)on\b|\b(z|Z)u\b|\b(d|D)en\b|\b(d|D)em\b|\b(u|U)nd\b|\b(a|A)ls\b|\b(b|B)ei\b|\b(b|B)eim\b|\b(i|I)st\b|\b(e|E)in\b|\b(a|A)us\b|\b(m|M)it\b|\b(e|E)ine(|n)\b|\b(a|A)n\b|\b(b|B)is\b|\b(e|E)\b|\b(n|N)ach\b|\b(f|F)ür\b|\b(a|A)(n|m)\b', '', t_cleaned)
+
+
         split_it = t_cleaned.split()
         Counter = collections.Counter(map(str.lower, split_it))
         most_occur = Counter.most_common(10)
@@ -145,20 +150,21 @@ class webNews():
 
 #UI Initialisation
 
-    with dpg.window(label='Random Articles', width=585, height=800):
+    with dpg.window(label='Random Articles', width=1000, height=1000):
         dpg.add_input_text(tag='date_text', readonly=True, width=570)
         dpg.add_input_text(tag='title_text', readonly=True, width=570)
         dpg.add_input_text(tag='input_text', multiline=True, readonly=True, width=570, height= 600)
         dpg.add_button(callback=refresh, label='refresh')
-        dpg.add_combo(tag='cbo', label='mode', items=modes, default_value='ORF')
-        dpg.add_input_text(tag='search_result', label='Most Common Words', readonly=True, multiline=True, height=60)
-        dpg.add_input_text(tag='article_url',label='Article URL', readonly=True)
+        dpg.add_combo(tag='cbo', label='mode', items=modes, default_value='ORF',width=570)
+        dpg.add_input_text(tag='search_result', label='Most Common Words', readonly=True, multiline=True, height=60,width=570)
+        dpg.add_input_text(tag='article_url',label='Article URL', readonly=True,width=570)
+        dpg.add_checkbox(tag='filter_words', label='Filter common words')
         dpg.show_style_editor()
         dpg.show_font_manager()
         
 
 
-        with dpg.plot(no_title=True, no_mouse_pos=True, width=300, height=300):
+        with dpg.plot(label='Most common words', no_mouse_pos=True, width=400, height=400, pos=[580,27]):
 
             plttt = dpg.add_plot_legend(show=True)
             dpg.show_item(plttt)
